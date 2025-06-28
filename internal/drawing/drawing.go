@@ -1,6 +1,7 @@
 package drawing
 
 import (
+	"math"
 	"tinygo.org/x/drivers/pixel"
 )
 
@@ -13,6 +14,20 @@ func NewLineImage() pixel.Image[pixel.Monochrome] {
 
 func add(a int, b int) int {
 	return a + b
+}
+
+func PosToRad(pos uint, maxpos uint) float64 {
+	return 2 * math.Pi * float64(pos) / float64(maxpos)
+}
+
+func FindEndpoints(size float64, angle float64) (uint, uint, uint, uint) {
+	radius := size / 2
+	converted := math.Pi/2 - angle
+	x0 := radius * (math.Cos(converted) + 1)
+	y0 := radius * (math.Sin(converted) + 1)
+	x1 := size - x0
+	y1 := size - y0
+	return uint(math.Round(x0)), uint(math.Round(y0)), uint(math.Round(x1)), uint(math.Round(y1))
 }
 
 func DrawLine(img *pixel.Image[pixel.Monochrome], x0, y0, x1, y1 int) {
