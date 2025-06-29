@@ -21,7 +21,7 @@ func main() {
 		select {
 		case pos := <-encoder.PositionChannel:
 
-			rad := drawing.PosToRad(uint(pos), uint(encoder.StepsPerRevolution))
+			rad := drawing.PosToRad(int(pos), int(encoder.StepsPerRevolution))
 			x0, y0, x1, y1 := drawing.FindEndpoints(imgSize-1, rad)
 			//err := myDisplay.WriteText(fmt.Sprintf("%d,%d,%d,%d", x0, y0, x1, y1))
 

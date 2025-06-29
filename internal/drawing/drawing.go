@@ -12,11 +12,12 @@ func NewLineImage(size, x0, y0, x1, y1 int) *image.RGBA {
 	return img
 }
 
-func PosToRad(pos uint, maxPos uint) float64 {
+func PosToRad(pos int, maxPos int) float64 {
 	return 2 * math.Pi * float64(pos) / float64(maxPos)
 }
 
 func FindEndpoints(size int, angle float64) (int, int, int, int) {
+	size -= 1
 	radius := float64(size) / 2
 	converted := math.Pi/2 - angle
 	x0 := radius * (math.Cos(converted) + 1)
