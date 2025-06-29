@@ -9,15 +9,15 @@ import (
 type Encoder struct {
 	pinA               machine.Pin
 	pinB               machine.Pin
-	position           int16
+	position           int
 	lastPosition       uint8
-	PositionChannel    chan int16
-	StepsPerRevolution int16
-	stepDivisor        int16
-	PossibleRadians    []float32
+	PositionChannel    chan int
+	StepsPerRevolution int
+	stepDivisor        int
+	PossibleRadians    []float64
 }
 
-func NewEncoder(stepDivisor int16) (*Encoder, error) {
+func NewEncoder(stepsPerRevolution, stepDivisor int) (*Encoder, error) {
 	a := machine.D18
 	b := machine.D19
 
@@ -29,9 +29,10 @@ func NewEncoder(stepDivisor int16) (*Encoder, error) {
 		pinB:               b,
 		position:           0,
 		lastPosition:       0,
-		PositionChannel:    make(chan int16, 512),
-		StepsPerRevolution: 816,
+		PositionChannel:    make(chan int, 512),
+		StepsPerRevolution: stepsPerRevolution,
 		stepDivisor:        stepDivisor,
+		PossibleRadians:    calculatePossibleRads(stepsPerRevolution, stepDivisor),
 	}
 
 	err := a.SetInterrupt(machine.PinToggle, e.handleInterrupt)
