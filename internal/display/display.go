@@ -5,6 +5,8 @@ import (
 	"image/color"
 	"machine"
 	"neoblade/internal/colors"
+	"neoblade/internal/drawing"
+	"time"
 	"tinygo.org/x/drivers/ssd1331"
 	"tinygo.org/x/tinyfont"
 	"tinygo.org/x/tinyfont/freemono"
@@ -16,7 +18,7 @@ type Display struct {
 
 func NewDisplay() Display {
 	machine.SPI0.Configure(machine.SPIConfig{
-		Frequency: 8000000,
+		Frequency: 16000000,
 	})
 	screen := ssd1331.New(machine.SPI1, machine.D8, machine.D9, machine.D10)
 	screen.Configure(ssd1331.Config{})
@@ -27,7 +29,15 @@ func NewDisplay() Display {
 }
 
 func (d *Display) Clear() {
-	d.screen.FillScreen(colors.BLACK)
+	//d.screen.FillScreen(colors.BLACK)
+	d.screen.Tx([]byte{
+		0x26, 0x01, 0x22,
+		0x00, 0x00, // x0, y0
+		0x5F, 0x3F, // x1, y1
+		0x00, 0x00, 0x00, // outline color = black
+		0x00, 0x00, 0x00, // fill color = black
+	}, true)
+	time.Sleep(1 * time.Millisecond)
 }
 
 func (d *Display) WriteText(s string) error {
@@ -67,4 +77,41 @@ func ImageToColorRGBA(img *image.RGBA) []color.RGBA {
 	}
 
 	return out
+}
+
+func (d *Display) DrawAngledLine(x0, y0, x1, y1 int, colors []color.RGBA) {
+	dx := drawing.Abs(x1 - x0)
+	dy := -drawing.Abs(y1 - y0)
+	sx := 1
+	if x0 > x1 {
+		sx = -1
+	}
+	sy := 1
+	if y0 > y1 {
+		sy = -1
+	}
+	err := dx + dy
+
+	i := 0
+	for {
+		if i >= len(colors) {
+			break // Prevent overflow
+		}
+		d.screen.SetPixel(int16(x0), int16(y0), colors[i])
+		i++
+
+		if x0 == x1 && y0 == y1 {
+			break
+		}
+
+		e2 := 2 * err
+		if e2 >= dy {
+			err += dy
+			x0 += sx
+		}
+		if e2 <= dx {
+			err += dx
+			y0 += sy
+		}
+	}
 }

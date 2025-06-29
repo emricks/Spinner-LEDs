@@ -32,7 +32,7 @@ func NewEncoder(stepsPerRevolution, stepDivisor int) (*Encoder, error) {
 		PositionChannel:    make(chan int, 512),
 		StepsPerRevolution: stepsPerRevolution,
 		stepDivisor:        stepDivisor,
-		PossibleRadians:    calculatePossibleRads(stepsPerRevolution, stepDivisor),
+		PossibleRadians:    CalculatePossibleRads(stepsPerRevolution, stepDivisor),
 	}
 
 	err := a.SetInterrupt(machine.PinToggle, e.handleInterrupt)

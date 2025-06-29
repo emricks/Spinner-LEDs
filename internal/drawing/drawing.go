@@ -2,13 +2,14 @@ package drawing
 
 import (
 	"image"
+	"image/color"
 	"math"
 	"neoblade/internal/colors"
 )
 
 func NewLineImage(size, x0, y0, x1, y1 int) *image.RGBA {
 	img := image.NewRGBA(image.Rect(0, 0, size, size))
-	DrawLine(img, x0, y0, x1, y1)
+	DrawLineInImg(img, x0, y0, x1, y1)
 	return img
 }
 
@@ -27,9 +28,9 @@ func FindEndpoints(size int, angle float64) (int, int, int, int) {
 	return int(math.Round(x0)), int(math.Round(y0)), int(math.Round(x1)), int(math.Round(y1))
 }
 
-func DrawLine(img *image.RGBA, x0, y0, x1, y1 int) {
-	dx := abs(x1 - x0)
-	dy := -abs(y1 - y0)
+func DrawLineInImg(img *image.RGBA, x0, y0, x1, y1 int) {
+	dx := Abs(x1 - x0)
+	dy := -Abs(y1 - y0)
 	sx := -1
 	sy := -1
 	if x0 < x1 {
@@ -57,7 +58,48 @@ func DrawLine(img *image.RGBA, x0, y0, x1, y1 int) {
 	}
 }
 
-func abs(x int) int {
+func ExtractLinePixels(img image.Image, x0, y0, x1, y1 int) []color.RGBA {
+	var result []color.RGBA
+
+	dx := Abs(x1 - x0)
+	dy := -Abs(y1 - y0)
+	sx := 1
+	if x0 > x1 {
+		sx = -1
+	}
+	sy := 1
+	if y0 > y1 {
+		sy = -1
+	}
+	err := dx + dy
+
+	for {
+		r, g, b, a := img.At(x0, y0).RGBA()
+		result = append(result, color.RGBA{
+			R: uint8(r >> 8),
+			G: uint8(g >> 8),
+			B: uint8(b >> 8),
+			A: uint8(a >> 8),
+		})
+
+		if x0 == x1 && y0 == y1 {
+			break
+		}
+		e2 := 2 * err
+		if e2 >= dy {
+			err += dy
+			x0 += sx
+		}
+		if e2 <= dx {
+			err += dx
+			y0 += sy
+		}
+	}
+
+	return result
+}
+
+func Abs(x int) int {
 	if x < 0 {
 		return -x
 	}
