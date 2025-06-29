@@ -44,13 +44,13 @@ func TestPosToRad(t *testing.T) {
 func TestFindEndpoints(t *testing.T) {
 
 	x0, y0, x1, y1 := FindEndpoints(100, math.Pi/3)
-	if x0 != uint(math.Round(50*(math.Sqrt(3)/2+1))) {
+	if x0 != int(math.Round(50*(math.Sqrt(3)/2+1))) {
 		t.Errorf("x0 = %d; want 93", x0)
 	}
 	if y0 != 75 {
 		t.Errorf("y0 = %d; want 75", y0)
 	}
-	if x1 != uint(math.Round(100-50*(math.Sqrt(3)/2+1))) {
+	if x1 != int(math.Round(100-50*(math.Sqrt(3)/2+1))) {
 		t.Errorf("x1 = %d; want 7", x1)
 	}
 	if y1 != 25 {

@@ -1,14 +1,14 @@
 package drawing
 
 import (
+	"image"
 	"math"
-	"tinygo.org/x/drivers/pixel"
+	"neoblade/internal/colors"
 )
 
-func NewLineImage() pixel.Image[pixel.Monochrome] {
-	img := pixel.NewImage[pixel.Monochrome](128, 64)
-	///img.FillSolidColor(pixel.NewMonochrome(255, 255, 255))
-	DrawLine(&img, 0, 0, 32, 32)
+func NewLineImage(size, x0, y0, x1, y1 int) *image.RGBA {
+	img := image.NewRGBA(image.Rect(0, 0, size, size))
+	DrawLine(img, x0, y0, x1, y1)
 	return img
 }
 
@@ -16,21 +16,21 @@ func add(a int, b int) int {
 	return a + b
 }
 
-func PosToRad(pos uint, maxpos uint) float64 {
-	return 2 * math.Pi * float64(pos) / float64(maxpos)
+func PosToRad(pos uint, maxPos uint) float64 {
+	return 2 * math.Pi * float64(pos) / float64(maxPos)
 }
 
-func FindEndpoints(size float64, angle float64) (uint, uint, uint, uint) {
-	radius := size / 2
+func FindEndpoints(size int, angle float64) (int, int, int, int) {
+	radius := float64(size) / 2
 	converted := math.Pi/2 - angle
 	x0 := radius * (math.Cos(converted) + 1)
 	y0 := radius * (math.Sin(converted) + 1)
-	x1 := size - x0
-	y1 := size - y0
-	return uint(math.Round(x0)), uint(math.Round(y0)), uint(math.Round(x1)), uint(math.Round(y1))
+	x1 := float64(size) - x0
+	y1 := float64(size) - y0
+	return int(math.Round(x0)), int(math.Round(y0)), int(math.Round(x1)), int(math.Round(y1))
 }
 
-func DrawLine(img *pixel.Image[pixel.Monochrome], x0, y0, x1, y1 int) {
+func DrawLine(img *image.RGBA, x0, y0, x1, y1 int) {
 	dx := abs(x1 - x0)
 	dy := -abs(y1 - y0)
 	sx := -1
@@ -44,7 +44,7 @@ func DrawLine(img *pixel.Image[pixel.Monochrome], x0, y0, x1, y1 int) {
 	err := dx + dy
 
 	for {
-		img.Set(x0, y0, true)
+		img.Set(x0, y0, colors.GREEN)
 		if x0 == x1 && y0 == y1 {
 			break
 		}
