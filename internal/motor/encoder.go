@@ -11,9 +11,10 @@ type Encoder struct {
 	lastPosition       uint8
 	PositionChannel    chan int16
 	StepsPerRevolution int16
+	stepDivisor        int16
 }
 
-func NewEncoder() (*Encoder, error) {
+func NewEncoder(stepDivisor int16) (*Encoder, error) {
 	a := machine.D18
 	b := machine.D19
 
@@ -27,6 +28,7 @@ func NewEncoder() (*Encoder, error) {
 		lastPosition:       0,
 		PositionChannel:    make(chan int16, 512),
 		StepsPerRevolution: 816,
+		stepDivisor:        stepDivisor,
 	}
 
 	err := a.SetInterrupt(machine.PinToggle, e.handleInterrupt)
@@ -75,10 +77,12 @@ func (e *Encoder) handleInterrupt(pin machine.Pin) {
 		e.position = e.StepsPerRevolution - 1
 	}
 
-	// perform action
-	select {
-	case e.PositionChannel <- e.position:
-	default:
-		// drop if buffer full
+	if e.position%e.stepDivisor == 0 {
+		// perform action
+		select {
+		case e.PositionChannel <- e.position:
+		default:
+			// drop if buffer full
+		}
 	}
 }
