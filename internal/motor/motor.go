@@ -1,3 +1,5 @@
+//go:build teensy41 || teensy40 || mimxrt1062
+
 package motor
 
 import (

@@ -1,3 +1,5 @@
+//go:build teensy41 || teensy40 || mimxrt1062
+
 package motor
 
 import (
@@ -12,6 +14,7 @@ type Encoder struct {
 	PositionChannel    chan int16
 	StepsPerRevolution int16
 	stepDivisor        int16
+	PossibleRadians    []float32
 }
 
 func NewEncoder(stepDivisor int16) (*Encoder, error) {

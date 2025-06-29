@@ -12,10 +12,6 @@ func NewLineImage(size, x0, y0, x1, y1 int) *image.RGBA {
 	return img
 }
 
-func add(a int, b int) int {
-	return a + b
-}
-
 func PosToRad(pos uint, maxPos uint) float64 {
 	return 2 * math.Pi * float64(pos) / float64(maxPos)
 }
