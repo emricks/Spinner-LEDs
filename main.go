@@ -10,6 +10,7 @@ import (
 
 var eLight = errorlight.NewErrorLight()
 var myDisplay = display.NewDisplay()
+var myDotStar = display.NewDotStar()
 var encoder *motor.Encoder
 var myMotor = motor.NewMotor()
 
@@ -25,10 +26,11 @@ func main() {
 		case pos := <-encoder.PositionChannel:
 
 			rad := drawing.PosToRad(pos, encoder.StepsPerRevolution)
-			x0, y0, x1, y1 := drawing.FindEndpoints(renderImage.Size, rad)
+			//x0, y0, x1, y1 := drawing.FindEndpoints(renderImage.Size, rad)
 			//err := myDisplay.WriteText(fmt.Sprintf("%d,%d,%d,%d", x0, y0, x1, y1))
-			myDisplay.Clear()
-			myDisplay.DrawAngledLine(x0, y0, x1, y1, renderImage.Data[rad])
+			//myDisplay.Clear()
+			//myDisplay.DrawAngledLine(x0, y0, x1, y1, renderImage.Data[rad])
+			myDotStar.Display(renderImage.Data[rad])
 		default:
 			// nothing
 		}

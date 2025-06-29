@@ -17,7 +17,7 @@ type Display struct {
 }
 
 func NewDisplay() Display {
-	machine.SPI0.Configure(machine.SPIConfig{
+	machine.SPI1.Configure(machine.SPIConfig{
 		Frequency: 16000000,
 	})
 	screen := ssd1331.New(machine.SPI1, machine.D8, machine.D9, machine.D10)
